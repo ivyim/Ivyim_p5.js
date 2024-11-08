@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personality Quiz</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        #questionContainer {
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress" id="progress" style="width: 0%"></div>
+        </div>
+        <div id="questionContainer">
+            <h2>Question 1:</h2>
+            <p>How do you prefer to spend your free time?</p>
+        </div>
+        <div id="optionsContainer">
+            <button class="button" onclick="handleOption(1, 'A')">Outdoors and active</button>
+            <button class="button" onclick="handleOption(1, 'B')">Indoors and relaxed</button>
+        </div>
+    </div>
+
+    <script>
+        let userPath = '';
+        let currentQuestion = 1;
+
+        const questions = {
+            2: {
+                A: {
+                    question: "What type of outdoor activity do you prefer?",
+                    options: [
+                        { text: "Sports and team activities", value: "A" },
+                        { text: "Solo adventures", value: "B" }
+                    ]
+                },
+                B: {
+                    question: "What's your ideal indoor activity?",
+                    options: [
+                        { text: "Reading and learning", value: "A" },
+                        { text: "Gaming and entertainment", value: "B" }
+                    ]
+                }
+            },
+            3: {
+                question: "Final question: How do you make important decisions?",
+                options: [
+                    { text: "Logic and analysis", value: "A" },
+                    { text: "Intuition and feelings", value: "B" }
+                ]
+            }
+        };
+
+        const results = {
+            'AAA': 'result1.html', // Logical Outdoor Team Player
+            'AAB': 'result2.html', // Intuitive Outdoor Team Player
+            'ABA': 'result3.html', // Logical Solo Adventurer
+            'ABB': 'result4.html', // Intuitive Solo Adventurer
+            'BAA': 'result5.html', // Logical Indoor Scholar
+            'BAB': 'result6.html', // Intuitive Indoor Scholar
+            'BBA': 'result7.html', // Logical Gamer
+            'BBB': 'result8.html'  // Intuitive Gamer
+        };
+
+        function updateProgressBar() {
+            const progress = (currentQuestion - 1) * 33.33;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function handleOption(questionNumber, choice) {
+            userPath += choice;
+            currentQuestion++;
+            updateProgressBar();
+
+            if (currentQuestion <= 3) {
+                if (currentQuestion === 2) {
+                    // Show second question based on first answer
+                    const nextQuestion = questions[2][choice];
+                    updateQuestion(nextQuestion.question, nextQuestion.options);
+                } else {
+                    // Show final question
+                    const finalQuestion = questions[3];
+                    updateQuestion(finalQuestion.question, finalQuestion.options);
+                }
+            } else {
+                // Redirect to result page
+                redirectToResult();
+            }
+        }
+
+        function updateQuestion(questionText, options) {
+            const questionContainer = document.getElementById('questionContainer');
+            const optionsContainer = document.getElementById('optionsContainer');
+            
+            questionContainer.innerHTML = `
+                <h2>Question ${currentQuestion}:</h2>
+                <p>${questionText}</p>
+            `;
+
+            optionsContainer.innerHTML = options.map(option => `
+                <button class="button" onclick="handleOption(${currentQuestion}, '${option.value}')">
+                    ${option.text}
+                </button>
+            `).join('');
+        }
+
+        function redirectToResult() {
+            // In a real application, you would redirect to the appropriate page
+            // For demonstration, we'll show the result in the current page
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <h2>Your Result</h2>
+                <p>Based on your choices (${userPath}), you would be redirected to: ${results[userPath]}</p>
+                <p>Your path: ${userPath}</p>
+                <button class="button" onclick="location.reload()">Start Over</button>
+            `;
+        }
+    </script>
+</body>
+</html>
